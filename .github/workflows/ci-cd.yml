@@ -1,0 +1,30 @@
+name: CI/CD Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ecommerce-poc .
+
+      - name: Run migrations inside Docker
+        run: docker run --rm ecommerce-poc python manage.py migrate --noinput
+
+      - name: Run tests inside Docker
+        run: docker run --rm ecommerce-poc python manage.py test
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render.com Deploy
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-<your-service-id>?key=<your-webhook-key>"

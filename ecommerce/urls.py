@@ -31,7 +31,7 @@ urlpatterns = [
     path('buy/<int:book_id>/', buy_book, name='buy_book'),
     path('purchase/success/', purchase_success, name='purchase_success'),
     path('', include('django_prometheus.urls')),
-    path('metrics/', include('django_prometheus.urls')),
+    #path('metrics/', include('django_prometheus.urls')),
 ]
 
 if settings.DEBUG:
